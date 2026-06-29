@@ -9,3 +9,9 @@
 - Found several changing bytes
 - Installed OpenOMEN
 - Fan commands had no observable effect
+
+2026-06-29
+- Booted into windows and located drivers used by OMEN Gaming Hub
+- Found HPCustomCapDriver and HPOmenCustomCapDriver
+- Found HPIC004 being used (as expected)
+- 

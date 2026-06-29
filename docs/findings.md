@@ -14,10 +14,12 @@
 - fan1_input always reports 0 RPM.
 - fan2_input always reports 0 RPM.
 - pwm1_enable exists.
+- hp-wmi.c does NOT contain this motherboard's ID in thermal profiles
 
 ## Windows
 
-Pending investigation.
+- Fans work completely normal (Through OMEN Gaming Hub)
+- Different layers of drivers used by the system..(HPCustomCapDriver, HPOmenCustomCapDriver)
 
 ## Conclusion
 
