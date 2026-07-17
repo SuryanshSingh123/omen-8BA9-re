@@ -7,6 +7,12 @@ Reverse engineering the firmware interface used for fan control and performance 
 - Understand how HP OMEN Gaming Hub communicates with firmware
 - Add Linux fan control support
 - Document the embedded controller
-- Contribute findings upstream
+- Contribute findings upstream (if possible)
 
-Status: 🚧 Research
+Status: Still researching
+
+## Getting started
+
+- Open docs and read the files
+- Check out scripts too
+- That's it for now!
