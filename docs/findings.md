@@ -78,3 +78,28 @@ V1:
 Any other value causes the driver to return `-EINVAL`, producing
 
 Failed to read current platform profile (-22)
+
+## Boot behavior (Most interesting one up until now)
+
+After rebooting directly from Windows to Linux:
+
+- Both fans immediately spin at maximum speed.
+- Maximum speed persists for approximately one minute.
+- Fans then return to normal automatic control.
+
+This behavior is reproducible after changing thermal modes in Windows.
+
+I'd guess it to be a EC watchdog/timeout
+
+## Embedded Controller
+
+- EC register 0x95 does not contain a thermal profile.
+- Register 0x95 consistently contains value 0x43 (translates to ASCII 67 im not kidding, which is character 'C').
+- Surrounding registers decode to ASCII:
+
+333-AC-12WK06083 (some build number?? manufacturing ID??)
+
+- This strongly indicates that the EC memory layout differs from what hp-wmi expects on board 8BA9.
+
+>Basically, driver asks the EC "Are you in Balanced (0x30), Performance (0x31), or Cool (0x50)?", to which the EC genuinely responds "67" or "C.", and the driver goes insane.
+> Just kidding, EC's raw response is "0x43", which the driver doesn't know about, returning ```-EINVAL```.

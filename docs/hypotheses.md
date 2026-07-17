@@ -1,21 +1,22 @@
 # Hypothesis 1
 
-EC register 0x95 returns a thermal profile value unsupported by hp-wmi
+EC register 0x95 returns a thermal profile value unsupported by hp-wmi (found to be 0x43)
 
 ## Evidence:
 platform_profile_omen_get_ec() only accepts a fixed set of thermal profile values
 Any unknown value results in -EINVAL (-22)
 
 ## Status:
-Probably true
+True
 
 # Hypothesis 2
 
 The EC read itself fails
 
 ## Evidence:
-ec_read() may return an error before any value is decoded
+NOT USEFUL ANYMORE
 
 ## Status:
-Unconfirmed
-Need to inspect ec_read() implementation or print the returned value
+False (confirmed)
+
+ec_read() works perfectly fine(returns ret = 0 which is a green flag).

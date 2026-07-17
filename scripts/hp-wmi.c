@@ -800,22 +800,36 @@ static int omen_get_thermal_policy_version(void)
 /*
  * DEBUG
  * Used during reverse engineering of HP OMEN 16-wd0xxx (Board 8BA9)
- * Prints the raw EC value returned from thermal profile register 0x95
+ * Reads EC dump at a given point of time.
+ * Intended to be used with the python utility, since differentiating two dumps with 280+ bytes is hard.
  */
 static int omen_thermal_profile_get(void)
 {
-    u8 data = 0;
+	u8 data;
+	int ret;
+	int i;
 
-    int ret = ec_read(HP_OMEN_EC_THERMAL_PROFILE_OFFSET, &data);
+pr_info("OMEN DEBUG: Full EC dump:\n");
 
-    pr_info("OMEN DEBUG: EC[0x95] ret=%d value=0x%02x (%u)\n",
-        ret, data, data);
+for (i = 0; i < 256; i++) {
+	ret = ec_read(i, &data);
 
-    if (ret)
-        return ret;
-
-    return data;
+	if (ret)
+		pr_info("0x%02X : ERR %d\n", i, ret);
+	else
+		pr_info("0x%02X : 0x%02X\n", i, data);
 }
+
+	ret = ec_read(HP_OMEN_EC_THERMAL_PROFILE_OFFSET, &data);
+
+	pr_info("OMEN DEBUG: thermal profile ret=%d data=0x%02X\n", ret, data);
+
+	if (ret)
+		return ret;
+
+	return data;
+}
+
 static int hp_wmi_fan_speed_max_set(int enabled)
 {
 	int ret;
