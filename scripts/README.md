@@ -2,7 +2,7 @@
 
 ## dump_ec.sh
 
-As EC debug is available now (thanks to the modifications made in hp-wmi for mock debugging), dumping is as simple as one command. However, (solely) for convenience, a executable is provided to neatly document the dump in a .txt file in the home directory.
+As EC debug is available now (thanks to the modifications made in hp-wmi for debugging), capturing a dump is as simple as one command. However, (solely) for convenience, a executable is provided to neatly document the dump in a .txt file in the home directory.
 
 Usage is simple, just execute this in your terminal (enter path)
 
@@ -30,13 +30,13 @@ sudo modprobe hp_wmi
 ```
 And capture two EC dumps:
 ```bash
-sudo dmesg -w | grep -A260 "Full EC dump" > 1_ec_dump.txt
+~/dump_ec.sh
 # Wait or perform an action that changes EC state
-sudo dmesg -w | grep -A260 "Full EC dump" > 2_ec_dump.txt
+~/dump_ec.sh
 ```
 Finally, Compare them with the utility
 ```bash
-python dump_diff.py 1_ec_dump.txt 2_ec_dump.txt
+python dump_diff.py ec_dump_1.txt ec_dump_2.txt
 ```
 >Note: The exact build/install commands depend on how your kernel module is set up. The repository does not assume a specific DKMS or kernel build workflow.
 
