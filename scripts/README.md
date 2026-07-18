@@ -1,12 +1,10 @@
 # Before You Inspect:
 
-## Shell scripts
+## dump_ec.sh
 
-The EC scripts are provided primarily to document the workflow used during this investigation. They automate the process of dumping and comparing Embedded Controller (EC) bytes and are intended as references for reproducing the experiments
+As EC debug is available now (thanks to the modifications made in hp-wmi for mock debugging), dumping is as simple as one command. However, (solely) for convenience, a executable is provided to neatly document the dump in a .txt file in the home directory.
 
-On newer kernels (7.1+), these scripts will most likely **not** function because the EC debug interface (`/sys/kernel/debug/ec/ec0/io`) is unavailable due to the absence of the `ec_sys`/`CONFIG_ACPI_EC_DEBUGFS` interface at runtime
-
-If EC debug access becomes available in the future, the scripts can be used without any modification (hopefully)
+Usage is simple, just execute this in your terminal (enter path)
 
 ## hp-wmi.c
 
