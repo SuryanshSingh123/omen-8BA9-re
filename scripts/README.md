@@ -18,6 +18,15 @@ It was primarily used to document the differences between:
 - A fresh boot state (after rebooting from windows - see findings.md)
 - The normal Linux "lazy fan" state after the EC settles
 
+## dump_correlate.py
+A utility to isolate which EC byte actually holds a given piece of state (e.g. thermal profile) across multiple dumps, filtering out noisy bytes like fan RPM or temperature counters that change on their own.
+
+Take several dumps labeled by state (repeat a label to filter out jitter within that state):
+```bash
+python dump_correlate.py balanced=b1.txt balanced=b2.txt performance=p1.txt cool=c1.txt
+```
+It prints only the addresses that are stable within each label but differ across labels, i.e. candidates for the register you're looking for.
+
 ### Usage
 First, replace your system's hp-wmi.c with the modified version provided in /scripts/hp-wmi.c (or implement an equivalent EC dump function yourself).
 
