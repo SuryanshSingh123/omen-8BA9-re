@@ -1,0 +1,139 @@
+ Andrew 2024-08-04 18:44:03 UTC
+
+I have an HP Omen laptop with i9-14900HX with dual boot. On windows, the CPU works with PL1 of 90Wt in performance mode and 50WT in balanced mode. 
+In Ubuntu, on the other hand, the sustained power is only 45Wt with performance mode selected in Gnome.
+
+Exploring the issue, I found that a patch (https://lore.kernel.org/platform-driver-x86/ZZFGgfsfrU2vuQoI@alexis-pc/) exists adding the 8BAD motherboard code to a list of boards subject to some Omen specific optimizations solving a similar performance issue for some other Omen laptops. My laptop's board identifier is 8C77 and it is not present in this list, so my guess is that it should be added to the list.
+
+Comment 1 Alexis Belmonte 2024-08-06 17:46:21 UTC
+
+Hi Andrew!
+
+Thanks for your report -- I do have a patch that updates the list of motherboards which indeed has your motherboard ID in it. I just haven't submitted it yet as I'm enjoying my holidays right now.
+
+I *DO* have to warn you that fan control for both the GPU and the CPU is done solely and passively by the embedded controller, and not the kernel -- and that is problematic.
+
+On my laptop (8BAD), it is pretty clear that the provided/passive fan curve table is broken. The fans run slower than what they should be, which results in potential overheating UNLESS if you manually write to the EC registers throughout the ec_sys module with write_support=1.
+
+I am certain that the Omen Control Center app takes ownership of this control, as this behaviour can also be observed with Windows if you didn't install the Omen Control Center app OR its associated backend driver that does the communication with the EC, as far as I've observed.
+
+Maybe this isn't the case for your laptop, maybe it is. I'd be happy if you could provide feedback with your personal experience after applying the patch that follows this comment -- I'll add a Tested-by tag to it if you do so.
+
+Let me know if you need any help, and good luck! :]
+
+Alexis
+
+Comment 2 Alexis Belmonte 2024-08-06 17:47:39 UTC
+
+From 5e6339ea712412b159242828775488fdc0670b0b Mon Sep 17 00:00:00 2001
+From: Alexis Belmonte <alexbelm48@gmail.com>
+Date: Mon, 1 Jul 2024 13:55:16 +0200
+Subject: [PATCH] platform/x86: hp-wmi: Update board lists for Omen and Victus
+ laptops
+
+Update the list of thermal profile boards for Omen and Victus laptops by
+parsing the latest version of the
+HP.Omen.Core.Model.Device.JSON.DeviceList.json file provided by the Omen
+Control Center.
+
+Update associated comments to show how to obtain the list of boards,
+improve formatting and improve comment format coherence.
+
+Signed-off-by: Alexis Belmonte <alexbelm48@gmail.com>
+---
+ drivers/platform/x86/hp/hp-wmi.c | 57 +++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+index a2d1884fedbc..cd78e5dea217 100644
+--- a/drivers/platform/x86/hp/hp-wmi.c
++++ b/drivers/platform/x86/hp/hp-wmi.c
+@@ -47,25 +47,34 @@ MODULE_ALIAS("wmi:5FB7F034-2C63-45E9-BE91-3D44E2C707E4");
+ 
+ #define zero_if_sup(tmp) (zero_insize_support?0:sizeof(tmp)) // use when zero insize is required
+ 
+-/* DMI board names of devices that should use the omen specific path for
+- * thermal profiles.
+- * This was obtained by taking a look in the windows omen command center
+- * app and parsing a json file that they use to figure out what capabilities
+- * the device should have.
+- * A device is considered an omen if the DisplayName in that list contains
+- * "OMEN", and it can use the thermal profile stuff if the "Feature" array
+- * contains "PerformanceControl".
++/*
++ * DMI board names of devices that should be considered as Omen with
++ * performance control support.
++ *
++ * This can be obtained by parsing
++ * HP.Omen.Core.Model.Device.JSON.DeviceList.json, a file that's provided by
++ * the Omen Control Center app on Windows.
++ *
++ * A device is considered as "Omen" if the DisplayName in that list contains
++ * "OMEN" and if the "Feature" array contains "PerformanceControl".
+  */
+ static const char * const omen_thermal_profile_boards[] = {
+ 	"84DA", "84DB", "84DC", "8574", "8575", "860A", "87B5", "8572", "8573",
+ 	"8600", "8601", "8602", "8605", "8606", "8607", "8746", "8747", "8749",
+ 	"874A", "8603", "8604", "8748", "886B", "886C", "878A", "878B", "878C",
+ 	"88C8", "88CB", "8786", "8787", "8788", "88D1", "88D2", "88F4", "88FD",
+-	"88F5", "88F6", "88F7", "88FE", "88FF", "8900", "8901", "8902", "8912",
+-	"8917", "8918", "8949", "894A", "89EB", "8BAD", "8A42"
++	"88F5", "88F6", "8A13", "8A14", "8A15", "8A16", "88F7", "88FE", "8A17",
++	"8A18", "8A19", "8A1A", "8BAD", "8BB0", "88FF", "8900", "8901", "8902",
++	"8912", "8917", "8918", "8A97", "8A96", "8D2C", "8949", "8A98", "894A",
++	"8B1D", "89EB", "8A4C", "8A4D", "8A4E", "8A40", "8A41", "8A42", "8A43",
++	"8A44", "8BA8", "8BA9", "8BAA", "8BAB", "8BAC", "8C76", "8C77", "8C78",
++	"8BCA", "8BCB", "8BCD", "8BCF", "8C9B", "8BB3", "8BB4", "8C4D", "8C4E",
++	"8C58", "8C75", "8C74", "8C73", "8CC1", "8CC0", "8CF1", "8CF2", "8CF3",
++	"8CF4"
+ };
+ 
+-/* DMI Board names of Omen laptops that are specifically set to be thermal
++/*
++ * DMI Board names of Omen laptops that are specifically set to be thermal
+  * profile version 0 by the Omen Command Center app, regardless of what
+  * the get system design information WMI call returns
+  */
+@@ -73,17 +82,35 @@ static const char * const omen_thermal_profile_force_v0_boards[] = {
+ 	"8607", "8746", "8747", "8749", "874A", "8748"
+ };
+ 
+-/* DMI board names of Omen laptops that have a thermal profile timer which will
++/*
++ * DMI board names of Omen laptops that have a thermal profile timer which will
+  * cause the embedded controller to set the thermal profile back to
+  * "balanced" when reaching zero.
++ *
++ * Unlike for omen_thermal_profile_boards, there is no currently known way to
++ * know which boards have this feature. This list is based on boards that have
++ * either been reported to have this feature or boards that are part of the
++ * same model group.
++ *
++ * Volunteers with an Omen laptop are welcome to test this feature and report
++ * back to the maintainers.
+  */
+ static const char * const omen_timed_thermal_profile_boards[] = {
+-	"8BAD", "8A42"
++	"88F7", "88FE", "8A17", "8A18", "8A19", "8A1A", "8BAD", "8BB0", "8A40",
++	"8A41", "8A42", "8A43", "8A44"
+ };
+ 
+-/* DMI Board names of Victus laptops */
++/*
++ * DMI Board names of Victus laptops -- again, we parse the aforementioned file
++ * in omen_thermal_profile_boards to know which boards are identified as
++ * "Victus".
++ */
+ static const char * const victus_thermal_profile_boards[] = {
+-	"8A25"
++	"88EE", "88EB", "88EC", "88ED", "8934", "8A21", "8A22", "88F8", "88F9",
++	"88FA", "8A25", "8A26", "8A27", "89B5", "8B3B", "8B3C", "8B3D", "89D8",
++	"8CC9", "8A3C", "8A3D", "8A3E", "8A3F", "8C30", "8C2F", "8D07", "8A4F",
++	"8A50", "8BB2", "8BC8", "8BB1", "8C2D", "8C2E", "8C3F", "8C40", "8BBD",
++	"8BBE", "8BC1", "8BC2", "8C9A", "8C99", "8BD4", "8BD5", "8C9C", "8C9D"
+ };
+ 
+ enum hp_wmi_radio {
+-- 
+2.45.2
+
