@@ -228,3 +228,5 @@ What's more is that although 8BA9 is in the thermal_profiles table and timed_the
 
 My research till now did prove that 8BA9 is highly likely to work with the same offsets as the rest of the v1 boards here (exclude legacy). It has the same register and the same byte mapping as mentioned in the driver.
 
+**IMPORTANT**
+- ```0x59``` is stuck at ```0x00``` throughout Linux.
