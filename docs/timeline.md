@@ -55,3 +55,27 @@ platform_profile_omen_get_ec()
 ```
 
 Unlike previous assumptions, this path reads directly from the Embedded Controller rather than issuing a WMI query
+
+## 2026-07-21
+
+- Booted into Windows.
+- Installed RWEverything.
+- Had to reboot twice to disable security settings that didn't allow vulnerable drivers to run (RW.sys)
+- Opened the EC tab.
+- Saw all 256 registers, refreshing every 1.5s, live.
+- Set the offset to 500ms.
+- Opened OMEN Gaming Hub and switched from balanced to perfomance multiple times. 
+
+After finding the register and the analysis on hp-wmi.c again,
+
+- Tried adding 8BA9 to ```victus_s_thermal_profile_boards```, in proper syntax:
+
+```C
+	{
+		.matches = { DMI_MATCH(DMI_BOARD_NAME, "8BAB") },
+		.driver_data = (void *)&omen_v1_thermal_params,
+	},
+```
+
+- Rebuilt and installed dkms module (for the changes in code duh)
+- And it did not work. The linux dumps still return thermal_profile = 0x43..
