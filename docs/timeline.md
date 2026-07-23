@@ -79,3 +79,30 @@ After finding the register and the analysis on hp-wmi.c again,
 
 - Rebuilt and installed dkms module (for the changes in code duh)
 - And it did not work. The linux dumps still return thermal_profile = 0x43..
+
+## 2026-07-23
+
+- Nuked entire dkms module.
+- Re installed form AUR cache.
+- Added board name again. 
+- And...
+
+### IT WORKED
+
+- Launched OmenCtl
+- Fan RPMs, OK
+- Fan Control, OK
+
+The issue that literally led me to learn a slice of reverse engineering and how ECs work and all, was now fixed.
+
+I did it. I fixed the issue.
+
+So why was profile still reading 0x43 in the debug?
+
+Because thats the code's fault, it literally read data for ```HP_OMEN_EC_THERMAL_PROFILE_OFFSET```
+
+All this time, the patch was literally adding 4 lines of code to hp-wmi.c.
+
+I forked, commited, and mailed the .patch file text to the maintainers.
+
+WILL UPDATE README LATER

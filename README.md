@@ -9,7 +9,7 @@ Reverse engineering the firmware interface used for fan control and performance 
 - Document the embedded controller
 - Contribute findings upstream (if possible)
 
-Status: Still researching
+Status: COMPLETED! (Waiting for response from maintainers)
 
 ## Getting started
 

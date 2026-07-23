@@ -230,3 +230,13 @@ My research till now did prove that 8BA9 is highly likely to work with the same 
 
 **IMPORTANT**
 - ```0x59``` is stuck at ```0x00``` throughout Linux.
+
+## 0x59 changed?
+
+I only said it was stuck at 0x00 looking at the dumps in this repo, I just realized that it had changed to 0x01 in my current dumps.
+
+Weird, its probably related to from which state in windows I rebooted into linux, since the dumps in this repo were taken after a reboot from ECO Mode in Windows, and later I switched to Balance.
+
+---
+
+## END OF FINDINGS :)
