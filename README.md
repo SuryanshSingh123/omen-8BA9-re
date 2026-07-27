@@ -9,7 +9,7 @@ Reverse engineering the firmware interface used for fan control and performance 
 - Document the embedded controller
 - Contribute findings upstream (if possible)
 
-Status: COMPLETED! (Waiting for response from maintainers)
+Status: COMPLETED! (Waiting for maintainer to push to public branch)
 
 ## Getting started
 
@@ -18,9 +18,11 @@ Status: COMPLETED! (Waiting for response from maintainers)
 - That's it for now!
 
 
-## NOW ON KERNEL MAILING LIST ARCHIVE
-<a href = "https://lore.kernel.org/all/?q=8BA9">Here</a>
-<img width="1013" height="1074" alt="image" src="https://github.com/user-attachments/assets/203efcc2-91cd-4c62-addb-0bf81d9420b8" />
+## NOW: APPLIED TO MAINTAINERS' LOCAL BRANCH
+<a href = "https://lore.kernel.org/all/178515396660.10740.16009111599177841662.b4-ty@b4/">Here</a>
+
+<img width="668" height="626" alt="image" src="https://github.com/user-attachments/assets/fb264875-881e-423d-bbb0-5803a8dce0eb" />
+
 
 ## Fans on omen utilities
 
